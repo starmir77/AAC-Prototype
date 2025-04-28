@@ -1,5 +1,14 @@
+# Node modules
 node_modules/
-dist/
+
+# Vercel deployment settings (optional but good)
+.vercel/
+
+# Environment secrets
 .env
+.env.local
+.env.production
+.env.development
+
+# MacOS system files
 .DS_Store
-*.log

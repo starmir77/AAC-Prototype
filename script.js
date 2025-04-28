@@ -98,10 +98,18 @@ function updateCurrentTypedWord() {
 
 const backspaceBtn = document.getElementById("backspaceBtn");
 
-backspaceBtn.addEventListener("click", () => {
-    currentTypedWord = currentTypedWord.slice(0, -1);
-    updateCurrentTypedWord();
-})
+backspaceBtn.addEventListener('click', () => {
+    if (currentTypedWord.length > 0) {
+      // Still typing a word → delete last letter
+      currentTypedWord = currentTypedWord.slice(0, -1);
+      updateCurrentTypedWord();
+    } else if (builtSentence.length > 0) {
+      // Finished typing → delete last added word
+      builtSentence.pop();  // Remove last word
+      updateCurrentSentenceDisplay();  // Refresh screen
+    }
+  });
+  
 
 const spaceBtn = document.getElementById("spaceBtn");
 
@@ -115,11 +123,68 @@ spaceBtn.addEventListener("click", () => {
 
 });
 
-function addWordToSencence(word) {
+function addWordToSentence(word) {
     builtSentence.push(word);
-
-    const wordDiv = document.createElement("span");
-    wordDiv = classList.add("sentence-word");
-    wordDiv.textContent = word;
-    document.getElementById("sentenceWords").appendChild(wordDiv);
+    updateCurrentSentenceDisplay();
 }
+
+
+async function speakSentence(sentence) {
+    try {
+        const response = await fetch('/api/polly', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ text: sentence })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to generate audio');
+        }
+
+        const arrayBuffer = await response.arrayBuffer(); // Get raw audio bytes
+        const blob = new Blob([arrayBuffer], { type: 'audio/mpeg' }); // Wrap into a playable blob
+        const url = URL.createObjectURL(blob); // Create temporary URL
+
+        const audio = new Audio(url); // Create Audio element
+        audio.play(); // Play it!
+    } catch (error) {
+        console.error('Error speaking sentence:', error);
+    }
+}
+
+playBtn.addEventListener('click', () => {
+    if (currentTypedWord.trim() !== "") {
+        // User typed something but never submitted it → submit it now
+        addWordToSentence(currentTypedWord.trim());
+        currentTypedWord = "";
+        updateCurrentTypedWord();
+    }
+
+    const sentence = builtSentence.join(' ').trim();
+
+    if (sentence.length === 0) {
+        console.error('Cannot play an empty sentence!');
+        return; // Stop if nothing to speak
+    }
+
+    speakSentence(sentence);
+});
+
+
+function updateCurrentSentenceDisplay() {
+    const sentenceWordsDiv = document.getElementById('sentenceWords');
+  
+    // Clear previous display
+    sentenceWordsDiv.innerHTML = '';
+  
+    // Rebuild sentence from builtSentence array
+    builtSentence.forEach(word => {
+      const span = document.createElement('span');
+      span.classList.add('sentence-word'); // Optional, if you want to style each word later
+      span.innerText = word + ' ';
+      sentenceWordsDiv.appendChild(span);
+    });
+  }
+  
