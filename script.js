@@ -1,65 +1,43 @@
-// Small word "database" for the word bank
-const wordBank = [
-    // Pronouns
-    { word: "I", type: "pronoun" },
-    { word: "You", type: "pronoun" },
-    { word: "We", type: "pronoun" },
-    { word: "They", type: "pronoun" },
-    { word: "He", type: "pronoun" },
-    { word: "She", type: "pronoun" },
-    { word: "It", type: "pronoun" },
+// List of available effects and properties
+const effectsConfig = {
+    emphasize: {
+        label: "Emphasize",
+        default: false,
+        buttonId: "emphasizeBtn",
+        apply: text => `<emphasis level="strong">${text}</emphasis>`
+    },
+    slowDown: {
+        label: "Slow Down",
+        default: false,
+        buttonId: "slowDownBtn",
+        apply: text => `<prosody rate="x-slow">${text}</prosody>`
+    },
+    speedUp: {
+        label: "Speed Up",
+        default: false,
+        buttonId: "speedUpBtn",
+        apply: text => `<prosody rate="x-fast">${text}</prosody>`
+    },
+    lowPitch: {
+        label: "Low Pitch",
+        default: false,
+        buttonId: "lowPitchBtn",
+        apply: text => `<prosody pitch="x-low">${text}</prosody>`
+    },
+    highPitch: {
+        label: "High Pitch",
+        default: false,
+        buttonId: "highPitchBtn",
+        apply: text => `<prosody pitch="x-high">${text}</prosody>`
+    }
+};
 
-    // Verbs
-    { word: "am", type: "verb" },
-    { word: "are", type: "verb" },
-    { word: "is", type: "verb" },
-    { word: "was", type: "verb" },
-    { word: "have", type: "verb" },
-    { word: "do", type: "verb" },
-    { word: "like", type: "verb" },
-    { word: "need", type: "verb" },
-    { word: "want", type: "verb" },
-    { word: "know", type: "verb" },
-
-    // Sarcasm/Emotion Words
-    { word: "really", type: "emotion" },
-    { word: "sure", type: "emotion" },
-    { word: "amazing", type: "emotion" },
-    { word: "nice", type: "emotion" },
-    { word: "wow", type: "emotion" },
-    { word: "definitely", type: "emotion" },
-    { word: "maybe", type: "emotion" },
-    { word: "obviously", type: "emotion" },
-    { word: "brilliant", type: "emotion" },
-    { word: "fantastic", type: "emotion" },
-    { word: "perfect", type: "emotion" },
-    { word: "thanks", type: "emotion" },
-    { word: "great", type: "emotion" },
-
-    // Connectors
-    { word: "and", type: "connector" },
-    { word: "but", type: "connector" },
-    { word: "if", type: "connector" },
-    { word: "so", type: "connector" },
-    { word: "because", type: "connector" },
-
-    // Useful Nouns
-    { word: "job", type: "noun" },
-    { word: "plan", type: "noun" },
-    { word: "time", type: "noun" },
-    { word: "day", type: "noun" },
-    { word: "idea", type: "noun" },
-    { word: "luck", type: "noun" },
-    { word: "try", type: "noun" },
-    { word: "genius", type: "noun" },
-    { word: "effort", type: "noun" }
-];
 
 // QWERTY layout
 const qwertyKeys = [
     ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
     ["A", "S", "D", "F", "G", "H", "J", "K", "L"],
-    ["Z", "X", "C", "V", "B", "N", "M"]
+    ["Z", "X", "C", "V", "B", "N", "M", "," , "?"]
 ];
 
 // Select where the keyboard will be inserted
@@ -69,6 +47,7 @@ const currentTypedWordDiv = document.getElementById("currentTypedWord");
 //Track currently typed word
 let currentTypedWord = "";
 let builtSentence = [];
+let currentPopupWordIndex = null;
 
 //Create keyboard buttons
 qwertyKeys.forEach(row => {
@@ -96,20 +75,68 @@ function updateCurrentTypedWord() {
     currentTypedWordDiv.textContent = currentTypedWord;
 }
 
+function addWordToSentence(text) {
+
+    if (text === ",") {
+        builtSentence.push({ pauseAfter: true });
+    } else {
+        const newWord = { text };
+
+        for (const effect in effectsConfig) {
+            newWord[effect] = effectsConfig[effect].default;
+        }
+
+        newWord.pauseAfter = false;
+        builtSentence.push(newWord);
+    }
+    updateCurrentSentenceDisplay();
+    console.log(builtSentence);
+}
+
+function showWordPopup(event, wordIndex) {
+    const popup = document.getElementById('wordPopup');
+
+    popup.classList.remove('hidden'); // Make popup visible
+
+    // Position popup near mouse click
+    popup.style.left = `${event.pageX + 10}px`;
+    popup.style.top = `${event.pageY + 10}px`;
+
+    currentPopupWordIndex = wordIndex; // Save which word in builtSentence we are editing
+
+    for (const effect in effectsConfig) {
+        const buttonId = effectsConfig[effect].buttonId;
+        const popupBtn = document.getElementById(buttonId);
+        if (!popupBtn) continue;
+
+        popupBtn.classList.remove('popup-effect-active');
+
+        if (builtSentence[wordIndex][effect]) {
+            popupBtn.classList.add('popup-effect-active');
+        }
+    }
+}
+
+function hideWordPopup() {
+    const popup = document.getElementById('wordPopup');
+    popup.classList.add('hidden');
+    currentPopupWordIndex = null; // Reset
+}
+
 const backspaceBtn = document.getElementById("backspaceBtn");
 
 backspaceBtn.addEventListener('click', () => {
     if (currentTypedWord.length > 0) {
-      // Still typing a word → delete last letter
-      currentTypedWord = currentTypedWord.slice(0, -1);
-      updateCurrentTypedWord();
+        // Still typing a word → delete last letter
+        currentTypedWord = currentTypedWord.slice(0, -1);
+        updateCurrentTypedWord();
     } else if (builtSentence.length > 0) {
-      // Finished typing → delete last added word
-      builtSentence.pop();  // Remove last word
-      updateCurrentSentenceDisplay();  // Refresh screen
+        // Finished typing → delete last added word
+        builtSentence.pop();  // Remove last word
+        updateCurrentSentenceDisplay();  // Refresh screen
     }
-  });
-  
+});
+
 
 const spaceBtn = document.getElementById("spaceBtn");
 
@@ -123,11 +150,48 @@ spaceBtn.addEventListener("click", () => {
 
 });
 
-function addWordToSentence(word) {
-    builtSentence.push(word);
-    updateCurrentSentenceDisplay();
+playBtn.addEventListener('click', () => {
+    if (currentTypedWord.trim() !== "") {
+        // User typed something but never submitted it → submit it now
+        addWordToSentence(currentTypedWord.trim());
+        currentTypedWord = "";
+        updateCurrentTypedWord();
+    }
+
+    const ssml = buildSSMLFromSentence();
+
+    if (ssml.length === 0) {
+        console.error('Cannot play an empty sentence!');
+        return; // Stop if nothing to speak
+    }
+
+    console.log("Generated SSML:", ssml);
+    speakSentence(ssml);
+});
+
+
+
+for (const effect in effectsConfig) {
+    const button = document.getElementById(`${effect}Btn`);
+    if (button) {
+        button.addEventListener("click", () => {
+            if (currentPopupWordIndex !== null) {
+                const word = builtSentence[currentPopupWordIndex];
+                word[effect] = !word[effect];
+                updateCurrentSentenceDisplay();
+                hideWordPopup();
+            }
+        })
+    }
 }
 
+
+document.addEventListener('click', (event) => {
+    const popup = document.getElementById('wordPopup');
+    if (!popup.contains(event.target)) {
+        hideWordPopup();
+    }
+});
 
 async function speakSentence(sentence) {
     try {
@@ -154,37 +218,73 @@ async function speakSentence(sentence) {
     }
 }
 
-playBtn.addEventListener('click', () => {
-    if (currentTypedWord.trim() !== "") {
-        // User typed something but never submitted it → submit it now
-        addWordToSentence(currentTypedWord.trim());
-        currentTypedWord = "";
-        updateCurrentTypedWord();
-    }
 
-    const sentence = builtSentence.join(' ').trim();
+function buildSSMLFromSentence() {
+    let ssml = '<speak>';
 
-    if (sentence.length === 0) {
-        console.error('Cannot play an empty sentence!');
-        return; // Stop if nothing to speak
-    }
+    builtSentence.forEach(wordObj => {
+        let wordText = wordObj.text;
 
-    speakSentence(sentence);
-});
+        for (const key in effectsConfig) {
+            if (wordObj[key] && typeof effectsConfig[key].apply === "function") {
+                wordText = effectsConfig[key].apply(wordText);
+            }
+        }
 
+        ssml += wordText + ' ';
+
+        if (wordObj.pauseAfter) {
+            ssml += `<break time="500ms"/>`;
+        }
+    });
+
+    ssml += '</speak>';
+
+    return ssml.trim();
+}
 
 function updateCurrentSentenceDisplay() {
     const sentenceWordsDiv = document.getElementById('sentenceWords');
-  
+
     // Clear previous display
     sentenceWordsDiv.innerHTML = '';
-  
+
     // Rebuild sentence from builtSentence array
-    builtSentence.forEach(word => {
-      const span = document.createElement('span');
-      span.classList.add('sentence-word'); // Optional, if you want to style each word later
-      span.innerText = word + ' ';
-      sentenceWordsDiv.appendChild(span);
+    builtSentence.forEach((wordObj, index) => {
+        // Create word buttons
+        const wordButton = document.createElement('button');
+        wordButton.classList.add('sentence-word');
+        wordButton.innerText = wordObj.text;
+
+        // Add effects visual cues
+        for (const key in effectsConfig) {
+            wordButton.classList.remove(`${key}-effect`);
+            console.log('Checking key:', key, 'value:', wordObj[key]);
+
+            if (wordObj[key]) {
+                wordButton.classList.add(`${key}-effect`);
+            }
+        }
+
+       
+        // Add click event
+        wordButton.addEventListener('click', (event) => {
+            event.stopPropagation();
+            showWordPopup(event, index);
+            console.log(`Word clicked: ${wordObj.text}`)
+        });
+
+
+        // Create a small container for each word+pause button
+        const wordContainer = document.createElement('div');
+        wordContainer.classList.add('word-container');
+
+        wordContainer.appendChild(wordButton);
+
+        sentenceWordsDiv.appendChild(wordContainer);
     });
-  }
-  
+
+}
+
+
+

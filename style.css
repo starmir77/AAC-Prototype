@@ -1,0 +1,159 @@
+/* General Layout */
+body {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  background-color: #f9f9f9;
+  line-height: 1.5;
+}
+
+main {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Headings */
+h1, h2 {
+  margin-bottom: 10px;
+}
+
+/* Sentence Display */
+#sentenceWords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+/* Each word container (word + pause) */
+.word-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Main word button */
+.sentence-word {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  font-size: 16px;
+}
+
+/* Pause icon next to word */
+.pause-button {
+  font-size: 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #555;
+}
+
+/* Effect styles */
+.emphasize-effect {
+  background-color: #fff3cd;
+  font-weight: bold;
+  border-color: #ffecb3;
+}
+
+.slowDown-effect {
+  background-color: #ede7f6;
+  border-color: #d1c4e9;
+}
+
+.speedUp-effect {
+  background-color: #e1f5fe;
+  border-color: #b3e5fc;
+}
+
+.lowPitch-effect {
+  border: 2px dashed #6a1b9a;
+}
+
+.highPitch-effect {
+  border: 2px dashed #2e7d32;
+}
+
+/* Word popup styling */
+#wordPopup {
+  position: absolute;
+  padding: 10px;
+  background-color: white;
+  border: 1px solid #aaa;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  z-index: 1000;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+#wordPopup.hidden {
+  display: none;
+}
+
+#wordPopup button {
+  padding: 6px 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#wordPopup button:hover {
+  background-color: #e0e0e0;
+}
+
+/* Keyboard layout */
+#keyboard {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 20px;
+}
+
+.keyboard-row {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+}
+
+.key-btn {
+  padding: 10px 14px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid #aaa;
+  background-color: white;
+  cursor: pointer;
+}
+
+#typingControls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+#typingControls button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  background-color: #e0e0e0;
+  border: none;
+  cursor: pointer;
+}
+
+#typingControls button:hover {
+  background-color: #d0d0d0;
+}
+
+/* Style for active/selected popup buttons */
+.popup-effect-active {
+  background-color: #d1e7dd;  /* soft green */
+  border-color: #0f5132;
+  color: #0f5132;
+  font-weight: bold;
+}
+

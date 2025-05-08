@@ -22,6 +22,7 @@ export default async function handler(req, res) {
   const command = new SynthesizeSpeechCommand({
     OutputFormat: "mp3",
     Text: text,
+    TextType: "ssml",
     VoiceId: "Joanna",
   });
 

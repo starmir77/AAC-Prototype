@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AAC Sarcasm Prototype</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
   <main>
@@ -49,8 +51,18 @@
     <!-- Play Button -->
     <button id="playBtn">Play Sentence</button>
 
+    <!-- 🚀 Popup Menu (initially hidden) -->
+    <div id="wordPopup" class="popup hidden">
+      <button id="emphasizeBtn">Emphasize</button>
+      <button id="slowDownBtn">slowDown</button>
+      <button id="speedUpBtn">speedUp</button>
+      <button id="lowPitchBtn">LowPitch</button>
+      <button id="highPitchBtn">HighPitch</button>
+    </div>
+
   </main>
 
   <script src="script.js"></script>
 </body>
+
 </html>
