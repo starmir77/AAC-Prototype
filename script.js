@@ -37,7 +37,7 @@ const effectsConfig = {
 const qwertyKeys = [
     ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
     ["A", "S", "D", "F", "G", "H", "J", "K", "L"],
-    ["Z", "X", "C", "V", "B", "N", "M", "," , "?"]
+    ["Z", "X", "C", "V", "B", "N", "M", ",", "?"]
 ];
 
 // Select where the keyboard will be inserted
@@ -78,18 +78,27 @@ function updateCurrentTypedWord() {
 function addWordToSentence(text) {
 
     if (text === ",") {
-        builtSentence.push({ pauseAfter: true });
-    } else {
-        const newWord = { text };
-
-        for (const effect in effectsConfig) {
-            newWord[effect] = effectsConfig[effect].default;
-        }
-
-        newWord.pauseAfter = false;
-        builtSentence.push(newWord);
+        builtSentence.push({ text: ", ", type: "comma", pauseAfter: true });
+        updateCurrentSentenceDisplay();
+        return;
     }
+
+    if (text === "?") {
+        builtSentence.push({ text: "?", type: "questionMark" });
+        updateCurrentSentenceDisplay();
+        return;
+    }
+
+    const newWord = { text, type: "word" };
+
+    for (const effect in effectsConfig) {
+        newWord[effect] = effectsConfig[effect].default;
+    }
+
+    newWord.pauseAfter = false;
+    builtSentence.push(newWord);
     updateCurrentSentenceDisplay();
+
     console.log(builtSentence);
 }
 
@@ -215,6 +224,7 @@ async function speakSentence(sentence) {
         audio.play(); // Play it!
     } catch (error) {
         console.error('Error speaking sentence:', error);
+        console.log("SSML being sent to Polly:", ssml);
     }
 }
 
@@ -222,13 +232,27 @@ async function speakSentence(sentence) {
 function buildSSMLFromSentence() {
     let ssml = '<speak>';
 
-    builtSentence.forEach(wordObj => {
+    const lastIndex = builtSentence.length - 1;
+    const isQuestion = builtSentence[lastIndex]?.type === "questionMark";
+
+    builtSentence.forEach((wordObj, index) => {
+        if (wordObj.type === "questionMark") return;
+
+        if (wordObj.type === "comma"){
+            ssml += `<break time="500ms"/>`;
+            return;
+        }
+
         let wordText = wordObj.text;
 
         for (const key in effectsConfig) {
             if (wordObj[key] && typeof effectsConfig[key].apply === "function") {
                 wordText = effectsConfig[key].apply(wordText);
             }
+        }
+
+        if (isQuestion && index === lastIndex - 1) {
+            wordText = `<prosody pitch="high">${wordText}</prosody>`;
         }
 
         ssml += wordText + ' ';
@@ -254,7 +278,14 @@ function updateCurrentSentenceDisplay() {
         // Create word buttons
         const wordButton = document.createElement('button');
         wordButton.classList.add('sentence-word');
-        wordButton.innerText = wordObj.text;
+
+        if (wordObj.type === "comma") {
+            wordButton.innerText = ",";
+        } else if (wordObj.type === "questionMark") {
+            wordButton.innerText = "?";
+        } else {
+            wordButton.innerText = wordObj.text;
+        }
 
         // Add effects visual cues
         for (const key in effectsConfig) {
@@ -266,7 +297,7 @@ function updateCurrentSentenceDisplay() {
             }
         }
 
-       
+
         // Add click event
         wordButton.addEventListener('click', (event) => {
             event.stopPropagation();
