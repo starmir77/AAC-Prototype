@@ -60,8 +60,10 @@ qwertyKeys.forEach(row => {
         btn.textContent = letter;
 
         btn.addEventListener("click", () => {
+
             currentTypedWord += letter;
             updateCurrentTypedWord();
+
         });
 
         rowDiv.appendChild(btn);
@@ -75,19 +77,7 @@ function updateCurrentTypedWord() {
     currentTypedWordDiv.textContent = currentTypedWord;
 }
 
-function addWordToSentence(text) {
-
-    if (text === ",") {
-        builtSentence.push({ text: ", ", type: "comma", pauseAfter: true });
-        updateCurrentSentenceDisplay();
-        return;
-    }
-
-    if (text === "?") {
-        builtSentence.push({ text: "?", type: "questionMark" });
-        updateCurrentSentenceDisplay();
-        return;
-    }
+function addWordToSentence(text, pauseAfter = false) {
 
     const newWord = { text, type: "word" };
 
@@ -95,7 +85,7 @@ function addWordToSentence(text) {
         newWord[effect] = effectsConfig[effect].default;
     }
 
-    newWord.pauseAfter = false;
+    newWord.pauseAfter = pauseAfter;
     builtSentence.push(newWord);
     updateCurrentSentenceDisplay();
 
@@ -152,7 +142,26 @@ const spaceBtn = document.getElementById("spaceBtn");
 // add event listener 
 spaceBtn.addEventListener("click", () => {
     if (currentTypedWord.trim() !== "") {
-        addWordToSentence(currentTypedWord.trim());
+        const trimmed = currentTypedWord.trim();
+        const lastLetter = trimmed[trimmed.length - 1];
+        console.log(trimmed);
+        console.log("lastletter: " + lastLetter);
+
+        if (lastLetter === ",") {
+            word = trimmed.slice(0, -1);
+            addWordToSentence(word, pauseAfter = true);
+            updateCurrentSentenceDisplay();
+            console.log(word);
+        }
+
+        else {
+
+            let pauseAfter = false;
+            let cleanText = trimmed;
+
+            addWordToSentence(cleanText, pauseAfter);
+        }
+
         currentTypedWord = "";
         updateCurrentTypedWord();
     }
@@ -238,7 +247,7 @@ function buildSSMLFromSentence() {
     builtSentence.forEach((wordObj, index) => {
         if (wordObj.type === "questionMark") return;
 
-        if (wordObj.type === "comma"){
+        if (wordObj.type === "comma") {
             ssml += `<break time="500ms"/>`;
             return;
         }
@@ -278,14 +287,7 @@ function updateCurrentSentenceDisplay() {
         // Create word buttons
         const wordButton = document.createElement('button');
         wordButton.classList.add('sentence-word');
-
-        if (wordObj.type === "comma") {
-            wordButton.innerText = ",";
-        } else if (wordObj.type === "questionMark") {
-            wordButton.innerText = "?";
-        } else {
-            wordButton.innerText = wordObj.text;
-        }
+        wordButton.innerText = wordObj.text;
 
         // Add effects visual cues
         for (const key in effectsConfig) {
@@ -296,7 +298,6 @@ function updateCurrentSentenceDisplay() {
                 wordButton.classList.add(`${key}-effect`);
             }
         }
-
 
         // Add click event
         wordButton.addEventListener('click', (event) => {
@@ -309,8 +310,16 @@ function updateCurrentSentenceDisplay() {
         // Create a small container for each word+pause button
         const wordContainer = document.createElement('div');
         wordContainer.classList.add('word-container');
-
         wordContainer.appendChild(wordButton);
+
+        if (wordObj.pauseAfter) {
+            const commabutton = document.createElement("button");
+            commabutton.classList.add('sentence-word');
+            commabutton.innerText = ",";
+            commabutton.disabled = true;
+            wordContainer.appendChild(commabutton);
+
+        }
 
         sentenceWordsDiv.appendChild(wordContainer);
     });
