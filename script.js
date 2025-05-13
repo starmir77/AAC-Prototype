@@ -61,25 +61,34 @@ qwertyKeys.forEach(row => {
 
         btn.addEventListener("click", () => {
 
-            currentTypedWord += letter;
-            updateCurrentTypedWord();
+            const punctuationChars = [".", "?", "!"];
 
-            if (currentTypedWord.endsWith("?") || currentTypedWord.endsWith("!") || currentTypedWord.endsWith(".")) {
-                const word = currentTypedWord.slice(0, -1);
-                console.log("word: " + word);
-                addWordToSentence(word, false);
-                addWordToSentence("?");
+            if (punctuationChars.includes(letter)) {
+                const word = currentTypedWord;
+                if (word) {
+                    addWordToSentence(word, false);
+                }
+                addWordToSentence(letter, false);
                 currentTypedWord = "";
-                updateCurrentTypedWord();
+            } else {
+
+                currentTypedWord += letter;
             }
 
+            updateCurrentTypedWord();
         });
 
         rowDiv.appendChild(btn);
     });
+
     keyboardContainer.appendChild(rowDiv);
 
 });
+
+
+
+
+
 
 // Update the display of current typed word
 function updateCurrentTypedWord() {
