@@ -13,52 +13,49 @@
   <main>
     <h1>AAC Sarcasm Prototype</h1>
 
-    <!-- Current Sentence Section -->
-    <section id="currentSentence">
-      <h2>Current Sentence</h2>
-      <div id="sentenceWords">
-        <!-- Words user selects or submits will appear here -->
-      </div>
-      <!-- Current Word Being Typed (live feedback) -->
-      <div id="currentTypedWord">
-        <!-- Letters user is typing right now appear here -->
-      </div>
-    </section>
+    <div id="ipadContainer">
+      <!-- Current Sentence Section -->
+      <section id="currentSentence">
+        <div id="sentenceWords">
+          <!-- Words user selects or submits will appear here -->
+        </div>
+        <!-- Current Word Being Typed (live feedback) -->
+        <div id="currentTypedWord">
+          <!-- Letters user is typing right now appear here -->
+        </div>
+        <button id="playBtn">Play</button>
+      </section>
 
-    <!-- Word Bank Section (Common Words) -->
-    <section id="wordBank">
-      <h2>Common Words</h2>
-      <div id="commonWords">
-        <!-- We'll dynamically insert grouped words here -->
-      </div>
-    </section>
+      <!-- Typing Area (QWERTY Keyboard) -->
+      <section id="typingArea">
+        <div id="keyboard">
+          <!-- We'll dynamically insert QWERTY keys here -->
 
-    <!-- Typing Area (QWERTY Keyboard) -->
-    <section id="typingArea">
-      <h2>Type Your Own Word</h2>
+        </div>
 
-      <div id="keyboard">
-        <!-- We'll dynamically insert QWERTY keys here -->
-      </div>
+        <div id="typingControls">
+          <button id="spaceBtn">Space</button>
+          <button id="backspaceBtn">Delete</button>
+        </div>
 
-      <div id="typingControls">
-        <button id="spaceBtn">Space</button>
-        <button id="submitWordBtn">Submit Word</button>
-        <button id="backspaceBtn">Backspace</button>
-      </div>
-    </section>
+        <div id="playArea">
+
+        </div>
+      </section>
+    </div>
 
     <!-- Play Button -->
-    <button id="playBtn">Play Sentence</button>
+
 
     <!-- 🚀 Popup Menu (initially hidden) -->
     <div id="wordPopup" class="popup hidden">
       <button id="emphasizeBtn">Emphasize</button>
-      <button id="slowDownBtn">slowDown</button>
-      <button id="speedUpBtn">speedUp</button>
-      <button id="lowPitchBtn">LowPitch</button>
-      <button id="highPitchBtn">HighPitch</button>
+      <button id="slowDownBtn">Slow Down</button>
+      <button id="speedUpBtn">Speed Up</button>
+      <button id="lowPitchBtn">Lower Pitch</button>
+      <button id="highPitchBtn">Increase Pitch</button>
     </div>
+
 
   </main>
 
