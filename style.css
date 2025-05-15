@@ -16,8 +16,6 @@
   --effect-active-color: #0f5132;
 }
 
-
-
 /* General Layout */
 body {
   display: flex;
@@ -42,7 +40,9 @@ main {
 
 /* Headings */
 h1 {
+  margin-top: 20px;
   margin-bottom: 10px;
+  font-size: 20px;
 }
 
 h2 {
@@ -74,9 +74,7 @@ h2 {
   margin-bottom: 10px;
   width: 100%;
   height: 180px;
-  /* Set the width to approximately one-third */
   box-sizing: border-box;
-  /* Include padding and border in the width */
   position: relative;
 }
 
@@ -101,7 +99,7 @@ h2 {
 .sentence-word {
   padding: 8px 14px;
   border-radius: 6px;
-  background-color: #c3d6f2;
+  background-color: var(--light-blue);
   border: none;
   cursor: pointer;
   font-size: 18px;
@@ -123,27 +121,7 @@ h2 {
   color: var(--medium-dark-gray);
 }
 
-/* Effect styles */
-.emphasize-effect {
-  transform: scale(1.15);
-  background-color: #b0c1da;
-}
 
-.slowDown-effect {
-  padding: 8px 24px;
-}
-
-.speedUp-effect {
-  padding: 8px 5px;
-}
-
-.lowPitch-effect {
-  transform: translateY(+8px);
-}
-
-.highPitch-effect {
-  transform: translateY(-8px);
-}
 
 /* Word popup styling */
 #wordPopup {
@@ -155,11 +133,11 @@ h2 {
   box-shadow: 0 4px 10px var(--shadow-strong);
   border-radius: 8px;
   z-index: 1000;
-  display: flex; /* Keep display flex */
-  flex-direction: column; /* Change to column */
-  flex-wrap: nowrap; /* Prevent wrapping, not needed in column, but good practice*/
-  gap: 8px; /* Keep the gap, it now applies vertically */
-  align-items: center; /* Align items to the start of the container */
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  gap: 8px;
+  align-items: center;
   justify-content: flex-start;
 }
 
@@ -178,6 +156,14 @@ h2 {
 
 #wordPopup button:hover {
   background-color: var(--light-gray-2);
+}
+
+.popup-effect-active {
+  background-color: var(--dark-gray);
+  border-color: var(--black);
+  box-shadow: 0 1px 2px var(--shadow-strong);
+  transform: translateY(2px);
+  color: var(--white); 
 }
 
 /* Keyboard layout */
@@ -206,21 +192,15 @@ h2 {
 
 .key-btn:hover {
   background-color: var(--medium-dark-gray);
-  /* Slightly lighter background */
   color: white;
-  /* Keep text white or change if desired */
   border-color: black;
-  /* change border color */
   box-shadow: 0 3px 6px var(--shadow-medium);
-  /* Add a subtle shadow */
   transform: translateY(-2px);
-  /* Slight upward movement */
   transition: background-color 0.2s ease,
     color 0.2s ease,
     border-color 0.2s ease,
     box-shadow 0.2s ease,
     transform 0.1s ease;
-  /* Smooth transition for all properties */
 }
 
 
@@ -243,9 +223,7 @@ h2 {
 
 #typingControls button:hover {
   box-shadow: 0 3px 6px var(--shadow-medium);
-  /* Add a subtle shadow */
   transform: translateY(-2px);
-  /* Slight upward movement */
   transition: background-color 0.2s ease,
     color 0.2s ease,
     border-color 0.2s ease,
@@ -260,13 +238,7 @@ h2 {
 }
 
 /* Style for active/selected popup buttons */
-.popup-effect-active {
-  background-color: #d1e7dd;
-  /* soft green */
-  border-color: #0f5132;
-  color: #0f5132;
-  font-weight: bold;
-}
+
 
 #playBtn {
   position: absolute;
@@ -280,4 +252,26 @@ h2 {
   bottom: 10px;
   right: 10px;
   border-radius: 50%;
+}
+
+/* Effect styles */
+.emphasize-effect {
+  transform: scale(1.15);
+  background-color: var(--darker-light-blue);
+}
+
+.slowDown-effect {
+  padding: 8px 24px;
+}
+
+.speedUp-effect {
+  padding: 8px 5px;
+}
+
+.lowPitch-effect {
+  transform: translateY(+8px);
+}
+
+.highPitch-effect {
+  transform: translateY(-8px);
 }
