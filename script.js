@@ -49,6 +49,13 @@ let currentTypedWord = "";
 let builtSentence = [];
 let currentPopupWordIndex = null;
 
+const effectConflicts = {
+    highPitch: ["lowPitch", "emphasize"],
+    lowPitch: ["highPitch", "emphasize"],
+    speedUp: ["slowDown"],
+    slowdDown: ["speedUp"]
+};
+
 //Create keyboard buttons
 qwertyKeys.forEach(row => {
     const rowDiv = document.createElement("div");
@@ -115,9 +122,9 @@ function showWordPopup(event, wordIndex) {
 
     popup.classList.remove('hidden'); // Make popup visible
 
-    // Position popup near mouse click
-    popup.style.left = `${event.pageX + 10}px`;
-    popup.style.top = `${event.pageY + 10}px`;
+    const rect = event.target.getBoundingClientRect();
+    popup.style.left = `${rect.left + window.scrollX}px`;
+    popup.style.top = `${rect.bottom + window.scrollY + 6}px`;
 
     currentPopupWordIndex = wordIndex; // Save which word in builtSentence we are editing
 
@@ -127,12 +134,33 @@ function showWordPopup(event, wordIndex) {
         if (!popupBtn) continue;
 
         popupBtn.classList.remove('popup-effect-active');
+        popupBtn.disabled = false;
+
 
         if (builtSentence[wordIndex][effect]) {
             popupBtn.classList.add('popup-effect-active');
         }
+
+        const conflicts = effectConflicts[effect] || [];
+        const shouldDisable = conflicts.some(conflict => builtSentence[wordIndex][conflict]);
+        if (shouldDisable && !builtSentence[wordIndex][effect]) {
+            popupBtn.disabled = true;
+        }
     }
 }
+
+window.addEventListener('resize', () => {
+    const popup = document.getElementById('wordPopup');
+    if (!popup.classList.contains('hidden') && currentPopupWordIndex !== null) {
+        const word = document.querySelectorAll('.sentence-word')[currentPopupWordIndex];
+        if (word) {
+            const rect = word.getBoundingClientRect();
+            popup.style.left = `${rect.left + window.scrollX}px`;
+            popup.style.top = `${rect.bottom + window.scrollY + 6}px`;
+        }
+    }
+});
+
 
 function hideWordPopup() {
     const popup = document.getElementById('wordPopup');
@@ -325,7 +353,7 @@ function updateCurrentSentenceDisplay() {
         });
 
 
-        // Create a small container for each word+pause button
+        // Create a small container for each word button
         const wordContainer = document.createElement('div');
         wordContainer.classList.add('word-container');
         wordContainer.appendChild(wordButton);
