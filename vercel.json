@@ -2,10 +2,14 @@
   "version": 2,
   "builds": [
     { "src": "api/polly.js", "use": "@vercel/node" },
-    { "src": "index.html", "use": "@vercel/static" }
+    { "src": "index.html", "use": "@vercel/static" },
+    { "src": "style.css", "use": "@vercel/static" },
+    { "src": "script.js", "use": "@vercel/static" }
   ],
   "routes": [
     { "src": "/api/polly", "dest": "api/polly.js" },
-    { "src": "/(.*)", "dest": "/$1" }
+    { "src": "/style.css", "dest": "/style.css" },
+    { "src": "/script.js", "dest": "/script.js" },
+    { "src": "/", "dest": "/index.html" }
   ]
 }
