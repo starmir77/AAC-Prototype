@@ -6,11 +6,9 @@
     { "src": "style.css", "use": "@vercel/static" },
     { "src": "script.js", "use": "@vercel/static" }
   ],
-  "routes": [
-    { "src": "/api/polly", "dest": "api/polly.js" },
-    { "src": "/style.css", "dest": "/style.css" },
-    { "src": "/script.js", "dest": "/script.js" },
-    { "src": "/", "dest": "/index.html" }
+  "rewrites": [
+    { "source": "/api/polly", "destination": "/api/polly.js" },
+    { "source": "/", "destination": "/index.html" }
   ],
   "headers": [
     {
