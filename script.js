@@ -92,11 +92,6 @@ qwertyKeys.forEach(row => {
 
 });
 
-
-
-
-
-
 // Update the display of current typed word
 function updateCurrentTypedWord() {
     currentTypedWordDiv.textContent = currentTypedWord;
@@ -229,8 +224,8 @@ playBtn.addEventListener('click', () => {
         return; // Stop if nothing to speak
     }
 
-    console.log("Generated SSML:", ssml);
     speakSentence(ssml);
+    console.log("Generated SSML:", ssml);
 });
 
 
@@ -279,7 +274,7 @@ async function speakSentence(sentence) {
         audio.play(); // Play it!
     } catch (error) {
         console.error('Error speaking sentence:', error);
-        console.log("SSML being sent to Polly:", ssml);
+        console.log("SSML being sent to Polly:", sentence);
     }
 }
 
