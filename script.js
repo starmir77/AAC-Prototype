@@ -10,7 +10,7 @@ const effectsConfig = {
         default: false,
         buttonId: "slowDownBtn",
         prosody: `rate="x-slow"`,
-        apply: text => `<prosody ${prosody}>${text}</prosody>`
+        apply: text => `<prosody rate="x-slow">${text}</prosody>`
     },
     speedUp: {
         label: "Speed Up",
@@ -46,20 +46,11 @@ const effectsConfig = {
         label: "High Volume",
         default: false,
         buttonId: "",
-        prosody:`volume="x-loud"`,
+        prosody: `volume="x-loud"`,
         apply: text => `<prosody volume="x-loud">${text}</prosody>`
     },
 
 };
-
-// let sentenceEffects = {
-//     highPitch: false,
-//     lowPitch: false,
-//     speedUp: false,
-//     slowDown: false,
-//     highVolume: false,
-//     lowVolume: false
-// }
 
 let sentenceEmotions = {
     Relaxed: false,
@@ -86,7 +77,7 @@ const createdEmotions = {
         effects: {
             highPitch: true,
             lowPitch: false,
-            speedUp: false,
+            speedUp: true,
             slowDown: false,
             highVolume: false,
             lowVolume: false
@@ -362,34 +353,36 @@ document.addEventListener('click', (event) => {
     }
 });
 
+// Toggle Emotion Function - 
+
+function toggleEmotion(selected) {
+    for (const emotion in sentenceEmotions) {
+        sentenceEmotions[emotion] = (emotion === selected);
+    }
+    console.log("Active Emotion: ", selected)
+}
+
+
 // Event listener for emotion buttons
 
 const relaxedBtn = document.getElementById('relaxedBtn');
 relaxedBtn.addEventListener('click', () => {
-    sentenceEmotions.Relaxed = !sentenceEmotions.Relaxed;
-    console.log("Angry Button", sentenceEmotions.Relaxed);
-    calmBtn.classList.toggle('is-active');
+    toggleEmotion("Relaxed");
 });
 
 const angryBtn = document.getElementById('angryBtn');
 angryBtn.addEventListener('click', () => {
-    sentenceEmotions.Angry = !sentenceEmotions.Angry;
-    console.log("Angry Button", sentenceEmotions.Angry);
-    angryBtn.classList.toggle('is-active');
+    toggleEmotion("Angry");
 });
 
 const excitedBtn = document.getElementById('excitedBtn');
 excitedBtn.addEventListener('click', () => {
-    sentenceEmotions.Excited = !sentenceEmotions.Excited;
-    excitedBtn.classList.toggle('is-active');
-    console.log("Excited Button", sentenceEmotions.Excited);
+    toggleEmotion("Excited");
 });
 
 const sadBtn = document.getElementById('sadBtn');
 sadBtn.addEventListener('click', () => {
-    sentenceEmotions.Sad = !sentenceEmotions.Sad;
-    sadBtn.classList.toggle('is-active');
-    console.log("Sad Button", sentenceEmotions.Sad);
+    toggleEmotion("Sad");
 });
 
 ////////////* FUNCTIONS/////////////
@@ -553,6 +546,7 @@ function buildSSMLFromSentence() {
 
     let prosodyAttributes = [];
 
+    // Apply Sentence emotions 
     for (const emotion in sentenceEmotions) {
         if (sentenceEmotions[emotion]) {
 
@@ -564,13 +558,12 @@ function buildSSMLFromSentence() {
                     prosodyAttributes.push(effectsConfig[effect].prosody);
                     console.log(prosodyAttributes);
                 }
-                break;
             }
         }
+    }
 
-        if (prosodyAttributes.length > 0) {
-            ssml = `<prosody ${prosodyAttributes.join(" ")}>${ssml}</prosody>`;
-        }
+    if (prosodyAttributes.length > 0) {
+        ssml = `<prosody ${prosodyAttributes.join(" ")}>${ssml}</prosody>`;
     }
 
     ssml = '<speak>' + ssml + '</speak>';
