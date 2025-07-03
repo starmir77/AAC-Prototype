@@ -38,6 +38,7 @@ const effectsConfig = {
         label: "Low Volume",
         default: false,
         buttonId: "",
+        prosody: `volume="x-soft"`,
         apply: text => `<prosody volume="x-soft">${text}</prosody>`
     },
 
@@ -45,18 +46,26 @@ const effectsConfig = {
         label: "High Volume",
         default: false,
         buttonId: "",
+        prosody:`volume="x-loud"`,
         apply: text => `<prosody volume="x-loud">${text}</prosody>`
     },
 
 };
 
-let sentenceEffects = {
-    highPitch: false,
-    lowPitch: false,
-    speedUp: false,
-    slowDown: false,
-    highVolume: false,
-    lowVolume: false
+// let sentenceEffects = {
+//     highPitch: false,
+//     lowPitch: false,
+//     speedUp: false,
+//     slowDown: false,
+//     highVolume: false,
+//     lowVolume: false
+// }
+
+let sentenceEmotions = {
+    Relaxed: false,
+    Excited: false,
+    Sad: false,
+    Angry: false,
 }
 
 const createdEmotions = {
@@ -66,16 +75,16 @@ const createdEmotions = {
             highPitch: false,
             lowPitch: false,
             speedUp: false,
-            slowDown: false,
+            slowDown: true,
             highVolume: false,
-            lowVolume: false,
+            lowVolume: true,
         },
         buttonId: "relaxedBtn"
     },
 
     Excited: {
         effects: {
-            highPitch: false,
+            highPitch: true,
             lowPitch: false,
             speedUp: false,
             slowDown: false,
@@ -88,20 +97,20 @@ const createdEmotions = {
     Sad: {
         effects: {
             highPitch: false,
-            lowPitch: false,
+            lowPitch: true,
             speedUp: false,
-            slowDown: false,
+            slowDown: true,
             highVolume: false,
-            lowVolume: false,
+            lowVolume: true,
         },
         buttonId: "sadBtn"
     },
 
     Angry: {
         effects: {
-            highPitch: false,
+            highPitch: true,
             lowPitch: false,
-            speedUp: false,
+            speedUp: true,
             slowDown: false,
             highVolume: false,
             lowVolume: false
@@ -355,36 +364,32 @@ document.addEventListener('click', (event) => {
 
 // Event listener for emotion buttons
 
-const calmBtn = document.getElementById('relaxedBtn');
-calmBtn.addEventListener('click', () => {
-    sentenceEffects.slowDown = !sentenceEffects.slowDown;
-    console.log("Calm Button", sentenceEffects.slowDown);
+const relaxedBtn = document.getElementById('relaxedBtn');
+relaxedBtn.addEventListener('click', () => {
+    sentenceEmotions.Relaxed = !sentenceEmotions.Relaxed;
+    console.log("Angry Button", sentenceEmotions.Relaxed);
     calmBtn.classList.toggle('is-active');
 });
 
 const angryBtn = document.getElementById('angryBtn');
 angryBtn.addEventListener('click', () => {
-    sentenceEffects.highPitch = !sentenceEffects.highPitch;
-    sentenceEffects.highVolume = !sentenceEffects.highVolume;
-    sentenceEffects.speedUp = !sentenceEffects.speedUp;
-    console.log("Angry Button", sentenceEffects.highPitch);
+    sentenceEmotions.Angry = !sentenceEmotions.Angry;
+    console.log("Angry Button", sentenceEmotions.Angry);
     angryBtn.classList.toggle('is-active');
 });
 
 const excitedBtn = document.getElementById('excitedBtn');
 excitedBtn.addEventListener('click', () => {
-    sentenceEffects.speedUp = !sentenceEffects.speedUp;
+    sentenceEmotions.Excited = !sentenceEmotions.Excited;
     excitedBtn.classList.toggle('is-active');
-    console.log("Excited Button", sentenceEffects.speedUp);
+    console.log("Excited Button", sentenceEmotions.Excited);
 });
 
 const sadBtn = document.getElementById('sadBtn');
 sadBtn.addEventListener('click', () => {
-    sentenceEffects.lowVolume = !sentenceEffects.lowVolume;
-    sentenceEffects.slowDown = !sentenceEffects.slowDown;
-    sentenceEffects.lowPitch = !sentenceEffects.lowPitch;
+    sentenceEmotions.Sad = !sentenceEmotions.Sad;
     sadBtn.classList.toggle('is-active');
-    console.log("Sad Button", sentenceEffects.lowVolume);
+    console.log("Sad Button", sentenceEmotions.Sad);
 });
 
 ////////////* FUNCTIONS/////////////
@@ -546,11 +551,26 @@ function buildSSMLFromSentence() {
 
     });
 
-    // apply functions to entire sentence
-    for (const key in sentenceEffects) {
-        if (sentenceEffects[key] && typeof effectsConfig[key].apply === "function") {
-            ssml = effectsConfig[key].apply(ssml)
-        };
+    let prosodyAttributes = [];
+
+    for (const emotion in sentenceEmotions) {
+        if (sentenceEmotions[emotion]) {
+
+            const effects = createdEmotions[emotion].effects;
+
+            for (const effect in effects) {
+
+                if (effects[effect] && effectsConfig[effect]?.prosody) {
+                    prosodyAttributes.push(effectsConfig[effect].prosody);
+                    console.log(prosodyAttributes);
+                }
+                break;
+            }
+        }
+
+        if (prosodyAttributes.length > 0) {
+            ssml = `<prosody ${prosodyAttributes.join(" ")}>${ssml}</prosody>`;
+        }
     }
 
     ssml = '<speak>' + ssml + '</speak>';
