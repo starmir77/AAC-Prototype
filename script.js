@@ -1,4 +1,3 @@
-// List of available effects and properties
 const effectsConfig = {
     emphasize: {
         label: "Emphasize",
@@ -10,32 +9,111 @@ const effectsConfig = {
         label: "Slow Down",
         default: false,
         buttonId: "slowDownBtn",
-        apply: text => `<prosody rate="x-slow">${text}</prosody>`
+        prosody: `rate="x-slow"`,
+        apply: text => `<prosody ${prosody}>${text}</prosody>`
     },
     speedUp: {
         label: "Speed Up",
         default: false,
         buttonId: "speedUpBtn",
+        prosody: `rate="x-fast"`,
         apply: text => `<prosody rate="x-fast">${text}</prosody>`
     },
     lowPitch: {
         label: "Low Pitch",
         default: false,
         buttonId: "lowPitchBtn",
-        apply: text => `<prosody pitch="x-low">${text}</prosody>`
+        prosody: `pitch="low"`,
+        apply: text => `<prosody pitch="low">${text}</prosody>`
     },
     highPitch: {
         label: "High Pitch",
         default: false,
         buttonId: "highPitchBtn",
+        prosody: `pitch="x-high"`,
         apply: text => `<prosody pitch="x-high">${text}</prosody>`
-    }
+    },
+
+    lowVolume: {
+        label: "Low Volume",
+        default: false,
+        buttonId: "",
+        apply: text => `<prosody volume="x-soft">${text}</prosody>`
+    },
+
+    highVolume: {
+        label: "High Volume",
+        default: false,
+        buttonId: "",
+        apply: text => `<prosody volume="x-loud">${text}</prosody>`
+    },
+
 };
+
+let sentenceEffects = {
+    highPitch: false,
+    lowPitch: false,
+    speedUp: false,
+    slowDown: false,
+    highVolume: false,
+    lowVolume: false
+}
+
+const createdEmotions = {
+
+    Relaxed: {
+        effects: {
+            highPitch: false,
+            lowPitch: false,
+            speedUp: false,
+            slowDown: false,
+            highVolume: false,
+            lowVolume: false,
+        },
+        buttonId: "relaxedBtn"
+    },
+
+    Excited: {
+        effects: {
+            highPitch: false,
+            lowPitch: false,
+            speedUp: false,
+            slowDown: false,
+            highVolume: false,
+            lowVolume: false
+        },
+        buttonId: "excitedBtn"
+    },
+
+    Sad: {
+        effects: {
+            highPitch: false,
+            lowPitch: false,
+            speedUp: false,
+            slowDown: false,
+            highVolume: false,
+            lowVolume: false,
+        },
+        buttonId: "sadBtn"
+    },
+
+    Angry: {
+        effects: {
+            highPitch: false,
+            lowPitch: false,
+            speedUp: false,
+            slowDown: false,
+            highVolume: false,
+            lowVolume: false
+        },
+        buttonId: "angryBtn"
+    }
+}
 
 
 // QWERTY layout
 const qwertyKeys = [
-    ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
+    ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "Delete"],
     ["A", "S", "D", "F", "G", "H", "J", "K", "L", "!", "."],
     ["Z", "X", "C", "V", "B", "N", "M", ",", "?"]
 ];
@@ -46,14 +124,14 @@ const currentTypedWordDiv = document.getElementById("currentTypedWord");
 
 //Track currently typed word
 let currentTypedWord = "";
-let builtSentence = [];
+let builtSentence = []; // Array of objects
 let currentPopupWordIndex = null;
 
 const effectConflicts = {
-    highPitch: ["lowPitch", "emphasize"],
-    lowPitch: ["highPitch", "emphasize"],
+    highPitch: ["lowPitch"],
+    lowPitch: ["highPitch"],
     speedUp: ["slowDown"],
-    slowdDown: ["speedUp"]
+    slowDown: ["speedUp"]
 };
 
 //Create keyboard buttons
@@ -63,24 +141,35 @@ qwertyKeys.forEach(row => {
 
     row.forEach(letter => {
         const btn = document.createElement("button");
-        btn.classList.add("key-btn");
+
         btn.textContent = letter;
 
-        btn.addEventListener("click", () => {
+        if (letter === "Delete") {
+            btn.classList.add("delete-key");
+        } else {
+            btn.classList.add("key-btn");
+        }
 
+        btn.addEventListener("click", () => {
             const punctuationChars = [".", "?", "!"];
+
+            if (letter === "Delete") {
+                if (currentTypedWord.length > 0) {
+                    currentTypedWord = currentTypedWord.slice(0, -1);
+                    updateCurrentTypedWord();
+                } else if (builtSentence.length > 0) {
+                    builtSentence.pop();
+                    updateCurrentSentenceDisplay();
+                }
+                return;
+            }
 
             if (punctuationChars.includes(letter)) {
                 const word = currentTypedWord;
-                if (word) {
-                    addWordToSentence(word, false);
-                }
+                if (word) { addWordToSentence(word, false); }
                 addWordToSentence(letter, false);
                 currentTypedWord = "";
-            } else {
-
-                currentTypedWord += letter;
-            }
+            } else { currentTypedWord += letter; }
 
             updateCurrentTypedWord();
         });
@@ -136,11 +225,7 @@ function showWordPopup(event, wordIndex) {
             popupBtn.classList.add('popup-effect-active');
         }
 
-        const conflicts = effectConflicts[effect] || [];
-        const shouldDisable = conflicts.some(conflict => builtSentence[wordIndex][conflict]);
-        if (shouldDisable && !builtSentence[wordIndex][effect]) {
-            popupBtn.disabled = true;
-        }
+        popupBtn.disabled = false;
     }
 }
 
@@ -166,14 +251,17 @@ function hideWordPopup() {
 const backspaceBtn = document.getElementById("backspaceBtn");
 
 backspaceBtn.addEventListener('click', () => {
-    if (currentTypedWord.length > 0) {
-        // Still typing a word → delete last letter
+
+    if (currentTypedWord !== "") {
         currentTypedWord = currentTypedWord.slice(0, -1);
-        updateCurrentTypedWord();
+        //updateCurrentTypedWord();
+
     } else if (builtSentence.length > 0) {
-        // Finished typing → delete last added word
-        builtSentence.pop();  // Remove last word
-        updateCurrentSentenceDisplay();  // Refresh screen
+        builtSentence.pop();
+        // currentTypedWord = "";
+        // builtSentence = [];
+        // updateCurrentTypedWord();
+        updateCurrentSentenceDisplay();
     }
 });
 
@@ -232,11 +320,24 @@ playBtn.addEventListener('click', () => {
 
 for (const effect in effectsConfig) {
     const button = document.getElementById(`${effect}Btn`);
+    if (!button) continue;
+
     if (button) {
         button.addEventListener("click", () => {
-            if (currentPopupWordIndex !== null) {
+            if (currentPopupWordIndex === null) return;
+
+            {
                 const word = builtSentence[currentPopupWordIndex];
-                word[effect] = !word[effect];
+
+                const isCurrentlyActive = word[effect];
+
+                const conflicts = effectConflicts[effect] || [];
+                conflicts.forEach(conflict => {
+                    word[conflict] = false;
+                });
+
+                word[effect] = !isCurrentlyActive;
+
                 updateCurrentSentenceDisplay();
                 hideWordPopup();
             }
@@ -252,6 +353,42 @@ document.addEventListener('click', (event) => {
     }
 });
 
+// Event listener for emotion buttons
+
+const calmBtn = document.getElementById('relaxedBtn');
+calmBtn.addEventListener('click', () => {
+    sentenceEffects.slowDown = !sentenceEffects.slowDown;
+    console.log("Calm Button", sentenceEffects.slowDown);
+    calmBtn.classList.toggle('is-active');
+});
+
+const angryBtn = document.getElementById('angryBtn');
+angryBtn.addEventListener('click', () => {
+    sentenceEffects.highPitch = !sentenceEffects.highPitch;
+    sentenceEffects.highVolume = !sentenceEffects.highVolume;
+    sentenceEffects.speedUp = !sentenceEffects.speedUp;
+    console.log("Angry Button", sentenceEffects.highPitch);
+    angryBtn.classList.toggle('is-active');
+});
+
+const excitedBtn = document.getElementById('excitedBtn');
+excitedBtn.addEventListener('click', () => {
+    sentenceEffects.speedUp = !sentenceEffects.speedUp;
+    excitedBtn.classList.toggle('is-active');
+    console.log("Excited Button", sentenceEffects.speedUp);
+});
+
+const sadBtn = document.getElementById('sadBtn');
+sadBtn.addEventListener('click', () => {
+    sentenceEffects.lowVolume = !sentenceEffects.lowVolume;
+    sentenceEffects.slowDown = !sentenceEffects.slowDown;
+    sentenceEffects.lowPitch = !sentenceEffects.lowPitch;
+    sadBtn.classList.toggle('is-active');
+    console.log("Sad Button", sentenceEffects.lowVolume);
+});
+
+////////////* FUNCTIONS/////////////
+
 async function speakSentence(sentence) {
     try {
         const response = await fetch('/api/polly', {
@@ -266,21 +403,115 @@ async function speakSentence(sentence) {
             throw new Error('Failed to generate audio');
         }
 
+        const marks = await getSpeechMarks(sentence);
+        console.log("Speech Marks:", marks);
+
         const arrayBuffer = await response.arrayBuffer(); // Get raw audio bytes
         const blob = new Blob([arrayBuffer], { type: 'audio/mpeg' }); // Wrap into a playable blob
         const url = URL.createObjectURL(blob); // Create temporary URL
 
         const audio = new Audio(url); // Create Audio element
+
+        // Word Counters to avoid double animations of repeated words
+        const wordCounters = {};
+
+        // Animate each word
+        marks.forEach((mark) => {
+            setTimeout(() => {
+                const normalizedMark = mark.value.trim().toUpperCase();
+
+                const index = wordCounters[normalizedMark] || 0;
+
+                const matchingWords = Array.from(document.querySelectorAll('.sentence-word')).filter(btn => btn.innerText.trim().toUpperCase() === normalizedMark);
+
+                const btn = matchingWords[index];
+
+                if (btn) {
+
+                    const { emphasize, pitch, slowDown, speedUp } = btn.dataset;
+
+                    const animation = {
+                        targets: btn,
+                        duration: 400,
+                        easing: 'easeInOutBack',
+                        direction: 'alternate',
+                    };
+
+                    switch (true) {
+                        case emphasize === "true":
+                            //animation.scale = [1, 1.5];
+                            animation.translateY = -20;
+                            break;
+
+                        case pitch === "high":
+                            animation.translateY = -15;
+                            animation.rotate = -10;
+                            break;
+
+                        case pitch === "low":
+                            animation.translateY = 15;
+                            animation.rotate = 10;
+                            break;
+
+                        case slowDown === "true":
+                            animation.scale = [1, 1.2];
+                            animation.duration = 800;
+                            break;
+
+                        case speedUp === "true":
+                            animation.scale = [1, 1.1];
+                            animation.duration = 200;
+                            break;
+
+                        default:
+                            animation.translateY = -5;
+                            break;
+                    }
+
+                    anime(animation);
+                }
+
+                wordCounters[normalizedMark] = index + 1;
+            }, mark.time);
+        });
+
         audio.play(); // Play it!
+
     } catch (error) {
         console.error('Error speaking sentence:', error);
         console.log("SSML being sent to Polly:", sentence);
     }
 }
 
+async function getSpeechMarks(text) {
+    const res = await fetch('/api/speechMark', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text }),
+    });
+    console.log("📡 Raw response from /api/speechMark:", res);
+
+    if (!res.ok) {
+        console.error("Failed to fetch speech marks");
+        return [];
+    }
+
+    const json = await res.json();
+    console.log("Parsed JSON: ", json);
+
+    const { marks } = json;
+
+    if (!marks) {
+        console.error("Speech marks missing in response");
+        return [];
+    }
+
+    return marks;
+}
+
 
 function buildSSMLFromSentence() {
-    let ssml = '<speak>';
+    let ssml = "";
 
     const lastIndex = builtSentence.length - 1;
     const isQuestion = builtSentence[lastIndex]?.type === "questionMark";
@@ -295,12 +526,14 @@ function buildSSMLFromSentence() {
 
         let wordText = wordObj.text;
 
+        // apply function for each effect 
         for (const key in effectsConfig) {
             if (wordObj[key] && typeof effectsConfig[key].apply === "function") {
                 wordText = effectsConfig[key].apply(wordText);
             }
         }
 
+        // Apply Question effect 
         if (isQuestion && index === lastIndex - 1) {
             wordText = `<prosody pitch="high">${wordText}</prosody>`;
         }
@@ -310,10 +543,17 @@ function buildSSMLFromSentence() {
         if (wordObj.pauseAfter) {
             ssml += `<break time="500ms"/>`;
         }
+
     });
 
-    ssml += '</speak>';
+    // apply functions to entire sentence
+    for (const key in sentenceEffects) {
+        if (sentenceEffects[key] && typeof effectsConfig[key].apply === "function") {
+            ssml = effectsConfig[key].apply(ssml)
+        };
+    }
 
+    ssml = '<speak>' + ssml + '</speak>';
     return ssml.trim();
 }
 
@@ -329,6 +569,13 @@ function updateCurrentSentenceDisplay() {
         const wordButton = document.createElement('button');
         wordButton.classList.add('sentence-word');
         wordButton.innerText = wordObj.text;
+
+        // Pass information on effects 
+        wordButton.dataset.emphasize = wordObj.emphasize;
+        wordButton.dataset.slowDown = wordObj.slowDown;
+        wordButton.dataset.speedUp = wordObj.speedUp;
+        wordButton.dataset.pitchHigh = wordObj.pitchHigh;
+        wordButton.dataset.pitchLow = wordObj.pitchLow;
 
         // Add effects visual cues
         for (const key in effectsConfig) {

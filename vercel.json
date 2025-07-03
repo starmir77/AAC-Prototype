@@ -1,14 +1,44 @@
 {
   "version": 2,
   "builds": [
-    { "src": "api/polly.js", "use": "@vercel/node" },
-    { "src": "index.html", "use": "@vercel/static" },
-    { "src": "style.css", "use": "@vercel/static" },
-    { "src": "script.js", "use": "@vercel/static" }
+    {
+      "src": "api/polly.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/speechMark.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "index.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "style.css",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "script.js",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "public/**",
+      "use": "@vercel/static"
+    }
   ],
   "rewrites": [
-    { "source": "/api/polly", "destination": "/api/polly.js" },
-    { "source": "/", "destination": "/index.html" }
+    {
+      "source": "/api/polly",
+      "destination": "/api/polly.js"
+    },
+    {
+      "source": "/api/speechMark",
+      "destination": "/api/speechMark.js"
+    },
+    {
+      "source": "/",
+      "destination": "/index.html"
+    }
   ],
   "headers": [
     {

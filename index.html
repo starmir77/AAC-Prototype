@@ -4,18 +4,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Space+Grotesk:wght@300..700&display=swap');
+  </style>
   <title>An AAC Humour Exploration</title>
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
 
   <main>
-    <h1>An AAC Humour Exploration</h1>
+    <div class="text-container">
+      <h1>Reclaiming Identity Through Humour</h1>
+      <p>Motor Neuron Disease (MND) is a progressive neurological condition that affects the nerves controlling muscle
+        movement, often leading to loss of speech. Millions of people worldwide rely on AAC (Augmentative and
+        Alternative Communication) devices to express themselves. But traditional AAC tools can sound robotic and
+        flat—lacking emotion, personality, and identity. This project explores a new kind of voice interface: one that
+        lets users shape tone, pitch, and pacing to express humor, sarcasm, and emphasis—making communication feel more
+        human.</p>
+    </div>
 
     <div id="ipadContainer">
       <!-- Current Sentence Section -->
       <section id="currentSentence">
+        <div id="emotionBtn-container">
+          <button class="emotion-Btn" id="relaxedBtn">Relaxed ☺️</button>
+          <button class="emotion-Btn" id="excitedBtn">Excited 😃</button>
+          <button class="emotion-Btn" id="sadBtn">Sad 😔</button>
+          <button class="emotion-Btn" id="angryBtn">Angry 😡</button>
+        </div>
         <div id="sentenceWords">
           <!-- Words user selects or submits will appear here -->
         </div>
@@ -34,8 +51,8 @@
         </div>
 
         <div id="typingControls">
-          <button id="spaceBtn">Space</button>
-          <button id="backspaceBtn">Delete</button>
+          <button id="spaceBtn"></button>
+          <button id="backspaceBtn">Clear All</button>
         </div>
 
         <div id="playArea">
@@ -49,17 +66,37 @@
 
     <!-- 🚀 Popup Menu (initially hidden) -->
     <div id="wordPopup" class="popup hidden">
-      <button id="emphasizeBtn">Emphasize</button>
-      <button id="slowDownBtn">Slow Down</button>
-      <button id="speedUpBtn">Speed Up</button>
-      <button id="lowPitchBtn">Lower Pitch</button>
-      <button id="highPitchBtn">Increase Pitch</button>
+      <div class="effect-container">
+        <p>Attention</p>
+        <hr class="divider">
+        <div class="buttons-container">
+          <button id="emphasizeBtn">Emphasize</button>
+        </div>
+      </div>
+      <div class="effect-container">
+        <p>Speed</p>
+        <hr class="divider">
+        <div class="buttons-container">
+          <button id="slowDownBtn">Slower</button>
+          <button id="speedUpBtn">Faster</button>
+        </div>
+      </div>
+      <div class="effect-container">
+        <p>Pitch</p>
+        <hr class="divider">
+        <div class="buttons-container">
+          <button id="lowPitchBtn">Lower</button>
+          <button id="highPitchBtn">Higher</button>
+        </div>
+      </div>
     </div>
 
 
   </main>
 
   <script src="script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+
 </body>
 
 </html>
