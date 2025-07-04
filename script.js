@@ -99,8 +99,8 @@ const createdEmotions = {
 
     Angry: {
         effects: {
-            highPitch: true,
-            lowPitch: false,
+            highPitch: false,
+            lowPitch: true,
             speedUp: true,
             slowDown: false,
             highVolume: false,
@@ -248,21 +248,25 @@ function hideWordPopup() {
     currentPopupWordIndex = null; // Reset
 }
 
-const backspaceBtn = document.getElementById("backspaceBtn");
+const clearAllBtn = document.getElementById("clearAllBtn");
 
-backspaceBtn.addEventListener('click', () => {
+clearAllBtn.addEventListener('click', () => {
 
-    if (currentTypedWord !== "") {
-        currentTypedWord = currentTypedWord.slice(0, -1);
-        //updateCurrentTypedWord();
+    builtSentence = [];
+    currentTypedWord = "";
+    updateCurrentTypedWord();
+    updateCurrentSentenceDisplay();
 
-    } else if (builtSentence.length > 0) {
-        builtSentence.pop();
-        // currentTypedWord = "";
-        // builtSentence = [];
-        // updateCurrentTypedWord();
-        updateCurrentSentenceDisplay();
+    for (const key in sentenceEmotions) {
+        sentenceEmotions[key] = false;
     }
+
+    document.querySelectorAll('.emotion-Btn').forEach(btn => {
+        btn.classList.remove('is-active');
+
+    })
+
+
 });
 
 
@@ -356,9 +360,48 @@ document.addEventListener('click', (event) => {
 // Toggle Emotion Function - 
 
 function toggleEmotion(selected) {
+
+    const isCurrentlyActive = sentenceEmotions[selected];
+
     for (const emotion in sentenceEmotions) {
-        sentenceEmotions[emotion] = (emotion === selected);
+        sentenceEmotions[emotion] = false;
     }
+
+    if (!isCurrentlyActive) {
+        sentenceEmotions[selected] = true;
+    }
+
+    document.querySelectorAll('.emotion-Btn').forEach(btn => {
+        btn.classList.remove('is-active')
+    });
+
+    if (!isCurrentlyActive) {
+        const activeBtnId = createdEmotions[selected]?.buttonId;
+        if (activeBtnId) {
+            const activeBtn = document.getElementById(activeBtnId);
+            if (activeBtn) {
+                activeBtn.classList.add('is-active');
+            }
+        }
+    }
+
+    const allWordButtons = document.querySelectorAll('.sentence-word');
+
+    allWordButtons.forEach(wordButton => {
+        wordButton.classList.forEach(clss => {
+            if (clss.startsWith("emotion-")) {
+                wordButton.classList.remove(clss);
+            }
+        });
+
+        if (!isCurrentlyActive) {
+            const cssClass = `emotion-${selected.toLowerCase()}`;
+            wordButton.classList.add(cssClass);
+        }
+    });
+
+
+
     console.log("Active Emotion: ", selected)
 }
 

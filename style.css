@@ -156,9 +156,42 @@ h2 {
   /*box-shadow: 0 1px 3px var(--shadow-strong);*/
 }
 
+/*Emotion Effects */
+
+.sentence-word.emotion-angry {
+  background: linear-gradient(135deg, #ff033e, #800500);
+  color: white;
+  border-radius: 8px;
+}
+
+.sentence-word.emotion-sad {
+  background: linear-gradient(135deg, #b0e0e6, #3C5291);
+  color: white;
+  border-radius: 8px;
+}
+
+.sentence-word.emotion-excited {
+  background: linear-gradient(135deg, #ED8B00, #ffd200);
+  color: #222;
+  border-radius: 8px;
+}
+
+.sentence-word.emotion-relaxed {
+  background: linear-gradient(135deg, #a8edea, #fed6e3);
+  color: #333;
+  border-radius: 8px;
+}
+
+.sentence-word[class*="emotion-"] {
+  transition: background 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+
+
 #currentTypedWord {
-  flex:1;
-  display:flex;
+  flex: 1;
+  display: flex;
   justify-items: center;
   align-items: center;
   font-family: 18px;
@@ -166,7 +199,7 @@ h2 {
   font-weight: 400px;
   width: 50%;
   padding-left: 10px;
-  color:gray;
+  color: gray;
 }
 
 
@@ -478,7 +511,7 @@ h2 {
 /* Original */
 .emotion-Btn {
   padding: 6px 14px;
-  border: 1.5px solid var(--pinkish); 
+  border: 1.5px solid var(--pinkish);
   border-radius: 8px;
   background-color: transparent;
   transition: all 0.2s ease;
@@ -486,7 +519,8 @@ h2 {
 
 /* Hover: subtle background hint */
 .emotion-Btn:hover {
-  background-color: rgba(255, 192, 203, 0.1); /* light pink tint */
+  background-color: rgba(255, 192, 203, 0.1);
+  /* light pink tint */
 }
 
 .emotion-Btn.is-active {
