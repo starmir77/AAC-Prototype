@@ -110,7 +110,6 @@ const createdEmotions = {
     }
 }
 
-
 // QWERTY layout
 const qwertyKeys = [
     ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "Delete"],
@@ -180,6 +179,18 @@ qwertyKeys.forEach(row => {
     keyboardContainer.appendChild(rowDiv);
 
 });
+
+showInitialPlaceholder();
+
+// Add placeholder animation
+function showInitialPlaceholder() {
+    const currentTypedEl = document.getElementById("currentTypedWord");
+    currentTypedEl.setAttribute("data-placeholder", "HELLO...TYPE A WORD, CLICK IT & ADD FUN EFFECTS!");
+    currentTypedEl.classList.add("typed-word-placeholder");
+    currentTypedEl.textContent = "";
+}
+
+
 
 // Update the display of current typed word
 function updateCurrentTypedWord() {
@@ -266,7 +277,6 @@ clearAllBtn.addEventListener('click', () => {
 
     })
 
-
 });
 
 
@@ -322,6 +332,8 @@ playBtn.addEventListener('click', () => {
 
 
 
+// Set Effects when effect button in pop up is clicked
+
 for (const effect in effectsConfig) {
     const button = document.getElementById(`${effect}Btn`);
     if (!button) continue;
@@ -348,6 +360,36 @@ for (const effect in effectsConfig) {
         })
     }
 }
+
+// Clear all effects when "RESET" button in clicked
+
+const resetButton = document.getElementById("clearAllEffects");
+resetButton.addEventListener('click', () => {
+
+    const currentWord = builtSentence[currentPopupWordIndex];
+    if (!currentWord) return;
+
+    const wordButtons = document.querySelectorAll(".sentence-word");
+    const currentWordButton = wordButtons[currentPopupWordIndex];
+
+    for (const effect in effectsConfig) {
+        // set effect for word as false
+        currentWord[effect] = false;
+
+        if (currentWordButton) {
+            // remove the css effect from the word button
+            currentWordButton.classList.remove(`${effect}-effect`);
+        }
+
+    }
+    // remove active css effect from pop up button
+    const effectButtons = document.querySelectorAll("#wordPopup button");
+
+    effectButtons.forEach((btn) => {
+        btn.classList.remove('popup-effect-active');
+    });
+
+});
 
 
 document.addEventListener('click', (event) => {
@@ -406,27 +448,24 @@ function toggleEmotion(selected) {
 }
 
 
-// Event listener for emotion buttons
+// Event listeners for emotion buttons
 
-const relaxedBtn = document.getElementById('relaxedBtn');
-relaxedBtn.addEventListener('click', () => {
-    toggleEmotion("Relaxed");
-});
+for (const emotion in createdEmotions) {
+    buttonId = createdEmotions[emotion].buttonId;
+    emotionButton = document.getElementById(buttonId);
+    emotionButton.addEventListener('click', () => {
+        toggleEmotion(emotion);
+    })
+}
 
-const angryBtn = document.getElementById('angryBtn');
-angryBtn.addEventListener('click', () => {
-    toggleEmotion("Angry");
-});
+function disableEmotionButtons() {
+    emotionButtons = document.querySelectorAll(".emotion-Btn");
+    emotionButtons.forEach(btn => {
+        btn.disabled = true;
+    })
 
-const excitedBtn = document.getElementById('excitedBtn');
-excitedBtn.addEventListener('click', () => {
-    toggleEmotion("Excited");
-});
-
-const sadBtn = document.getElementById('sadBtn');
-sadBtn.addEventListener('click', () => {
-    toggleEmotion("Sad");
-});
+    console.log("Disabled Buttons");
+}
 
 ////////////* FUNCTIONS/////////////
 
@@ -480,28 +519,23 @@ async function speakSentence(sentence) {
 
                     switch (true) {
                         case emphasize === "true":
-                            //animation.scale = [1, 1.5];
-                            animation.translateY = -20;
+                            animation.translateY = -15;
                             break;
 
                         case pitch === "high":
                             animation.translateY = -15;
-                            animation.rotate = -10;
                             break;
 
                         case pitch === "low":
-                            animation.translateY = 15;
-                            animation.rotate = 10;
+                            animation.translateY = 0;
                             break;
 
                         case slowDown === "true":
-                            animation.scale = [1, 1.2];
-                            animation.duration = 800;
+                            animation.translateY = -5;
                             break;
 
                         case speedUp === "true":
-                            animation.scale = [1, 1.1];
-                            animation.duration = 200;
+                            animation.translateY = -5;
                             break;
 
                         default:
@@ -667,9 +701,36 @@ function updateCurrentSentenceDisplay() {
 
         sentenceWordsDiv.appendChild(wordContainer);
 
+
+
     });
 
+    if (builtSentence.length === 0) {
+        disableEmotionButtons();
+    } else {
+        emotionButtons = document.querySelectorAll(".emotion-Btn");
+        emotionButtons.forEach(btn => {
+            btn.disabled = false;
+        })
+
+    }
+
 }
+
+// Disable placeholder animation
+
+let placeholderShown = true;
+
+document.addEventListener("click", () => {
+    if (placeholderShown) {
+        const currentTypedEl = document.getElementById("currentTypedWord");
+        currentTypedEl.classList.remove("typed-word-placeholder");
+        currentTypedEl.removeAttribute("data-placeholder");
+        placeholderShown = false;
+    }
+
+});
+
 
 
 

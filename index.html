@@ -12,62 +12,62 @@
 </head>
 
 <body>
-
   <main>
     <div class="text-container">
-      <h1>Reclaiming Identity Through Humour</h1>
-      <p>Motor Neuron Disease (MND) is a progressive neurological condition that affects the nerves controlling muscle
-        movement, often leading to loss of speech. Millions of people worldwide rely on AAC (Augmentative and
-        Alternative Communication) devices to express themselves. But traditional AAC tools can sound robotic and
-        flat—lacking emotion, personality, and identity. This project explores a new kind of voice interface: one that
-        lets users shape tone, pitch, and pacing to express humor, sarcasm, and emphasis—making communication feel more
-        human.</p>
+      <h1>Bringing Emotion to Synthetic Speech</h1>
+      <h2>Reclaiming identity, personality, and humor in assistive communication</h2>
+      <p>For millions of people with Motor Neuron Disease (MND), losing the ability to speak doesn’t mean losing the
+        need to express
+        themselves. But most AAC (Augmentative and Alternative Communication) devices still sound robotic—flattening
+        emotion, humor, and personality.</p>
+
+      <p>This prototype lets AAC users experiment with pitch and speed—shaping rhythm to bring back the feel of real speech.
+        Instead of relying on AI to guess emotion, it gives users direct control to express humor, frustration, or joy.
+        Visual cues make editing not just fast and intuitive, but fun and delightful too. It’s an early prototype, but a
+        clear step toward voices that sound more human.</p>
     </div>
 
     <div id="ipadContainer">
       <!-- Current Sentence Section -->
-      <section id="currentSentence">
-        <div id="emotionBtn-container">
-          <button class="emotion-Btn" id="relaxedBtn">Relaxed ☺️</button>
-          <button class="emotion-Btn" id="excitedBtn">Excited 😃</button>
-          <button class="emotion-Btn" id="sadBtn">Sad 😔</button>
-          <button class="emotion-Btn" id="angryBtn">Angry 😡</button>
-        </div>
-        <div id="sentenceWords">
-          <!-- Words user selects or submits will appear here -->
-        </div>
-        <!-- Current Word Being Typed (live feedback) -->
-        <div id="currentTypedWord">
-          <!-- Letters user is typing right now appear here -->
-        </div>
-        <button id="playBtn">Play</button>
-      </section>
+      <div id="iPad">
+        <section id="currentSentence">
+          <div id="emotionBtn-container">
+            <button class="emotion-Btn" id="relaxedBtn">Relaxed ☺️</button>
+            <button class="emotion-Btn" id="excitedBtn">Excited 😃</button>
+            <button class="emotion-Btn" id="sadBtn">Sad 😔</button>
+            <button class="emotion-Btn" id="angryBtn">Angry 😡</button>
+          </div>
+          <div id="sentenceWords">
+            <!-- Words user selects or submits will appear here -->
+          </div>
+          <!-- Current Word Being Typed (live feedback) -->
+          <div id="currentTypedWord" class="typed-word-placeholder">
+            <!-- Letters user is typing right now appear here -->
+          </div>
+          <!-- Play Button -->
+          <button id="playBtn"><img src="public/PlayButton.png" alt="Play"
+              style="height: 30px; width: 35px;" /></button>
+        </section>
 
-      <!-- Typing Area (QWERTY Keyboard) -->
-      <section id="typingArea">
-        <div id="keyboard">
-          <!-- We'll dynamically insert QWERTY keys here -->
-
-        </div>
-
-        <div id="typingControls">
-          <button id="spaceBtn"></button>
-          <button id="clearAllBtn">Clear All</button>
-        </div>
-
-        <div id="playArea">
-
-        </div>
-      </section>
+        <!-- Typing Area (QWERTY Keyboard) -->
+        <section id="typingArea">
+          <div id="keyboard">
+            <!-- Dinamically inserting QWERTY keys here -->
+          </div>
+          <div id="typingControls">
+            <button id="spaceBtn"></button>
+            <button id="clearAllBtn">Clear All</button>
+        </section>
+      </div>
     </div>
 
-    <!-- Play Button -->
-
-
-    <!-- 🚀 Popup Menu (initially hidden) -->
+    <!--Popup Menu (initially hidden) -->
     <div id="wordPopup" class="popup hidden">
       <div class="effect-container">
-        <p>Attention</p>
+        <div class="top-content">
+          <p>Attention</p>
+          <button id="clearAllEffects">RESET</button>
+        </div>
         <hr class="divider">
         <div class="buttons-container">
           <button id="emphasizeBtn">Emphasize</button>
